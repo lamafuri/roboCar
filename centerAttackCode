@@ -1,0 +1,133 @@
+#define in1 9
+#define in2 10
+#define in3 11
+#define in4 12
+#define ENA 5
+#define ENB 6
+
+// #define motorSpeed 170
+#define motorSpeed 140
+
+#include <Servo.h>
+Servo scoopLeft;
+Servo scoopRight;
+
+float speed_cm_per_s = 22.33;
+void setup() {
+  Serial.begin(9600);
+  pinMode(in1, OUTPUT); pinMode(in2, OUTPUT);
+  pinMode(in3, OUTPUT); pinMode(in4, OUTPUT);
+  pinMode(ENA, OUTPUT); pinMode(ENB, OUTPUT);
+
+  analogWrite(ENA, motorSpeed);  //67cm/3sec => 22.333 cm / sec 
+  analogWrite(ENB, motorSpeed);
+  
+  scoopLeft.attach(2);   // Left servo motor
+  scoopRight.attach(3);  // Right servo motor
+
+  delay(1000);//to give a good start 
+  openScoop(300);
+  moveToTopRight(); 
+  forward(10);
+  scoopPatient();
+  moveToHospital();
+  forward(30);
+
+  
+
+  
+}
+
+void loop() {}
+
+// Movement Functions
+void forward(float distance_cm) {
+  float time_needed = (distance_cm / speed_cm_per_s) * 1000; // convert to ms
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
+  delay((int)time_needed);
+  stop();
+}
+
+void backward(float distance_cm) {
+  float time_needed = (distance_cm / speed_cm_per_s) * 1000; // convert to ms
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, HIGH);
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, HIGH);
+  delay((int)time_needed);
+  stop();
+}
+
+void stop() {
+  digitalWrite(in1, LOW); digitalWrite(in2, LOW);
+  digitalWrite(in3, LOW); digitalWrite(in4, LOW);
+}
+
+void turnRight(int degrees) {
+  int duration = degrees * 5.56;  // Time to rotate in milliseconds
+  digitalWrite(in1, HIGH);  // Left motor forward
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, LOW);  // Right motor forward
+  digitalWrite(in4, HIGH);
+  delay(duration);
+  stop();
+}
+
+void turnLeft(int degrees) {
+  int duration = degrees * 5.56;
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, HIGH);  // Left motor backward
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);  // Right motor backward
+  delay(duration);
+  stop();
+}
+
+// Task Functions
+void scoopPatient() {
+  closeScoop(500);
+  forward(20);
+
+  
+  openScoop(1000);
+  forward(20);
+  closeScoop(500);
+  forward(10);
+  openScoop(500);
+ // Simulate scoop time
+}
+
+void openScoop(int delayTime) {
+  // Left goes to 0°, Right to 180°
+  scoopLeft.write(0);
+  scoopRight.write(180);
+  Serial.write("opened");
+  delay(delayTime);
+}
+
+void closeScoop(int delayTime) {
+  // Both move to center to grip (example: 90°)
+  scoopLeft.write(90);
+  scoopRight.write(90);
+  Serial.write("closed");
+  delay(delayTime);
+}
+void moveToTopRight() {
+  turnRight(8);
+  forward(96);
+  turnLeft(190);
+  forward(27);
+  delay(2000);
+}
+
+void moveToHospital() {
+   // Simulate drop-off
+   forward(70);
+}
+
+void returnToCenter() {
+ 
+}
