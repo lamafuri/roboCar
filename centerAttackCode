@@ -12,7 +12,7 @@
 Servo scoopLeft;
 Servo scoopRight;
 
-float speed_cm_per_s = 22.33;
+float speed_cm_per_s = 21.14;
 void setup() {
   Serial.begin(9600);
   pinMode(in1, OUTPUT); pinMode(in2, OUTPUT);
@@ -26,14 +26,12 @@ void setup() {
   scoopRight.attach(3);  // Right servo motor
 
   delay(1000);//to give a good start 
-  openScoop(300);
+  // openScoop(300);
   moveToTopRight(); 
-  forward(10);
-  scoopPatient();
   moveToHospital();
-  forward(30);
+  test();
 
-  
+
 
   
 }
@@ -41,6 +39,36 @@ void setup() {
 void loop() {}
 
 // Movement Functions
+void moveToTopRight() {
+  turnRight(28);// for 11.3V
+  forward(87.4);
+  turnLeft(170);
+  forward(64);//30
+  //41+23
+  // delay(1000);
+}
+void scoopPatient() {
+  // closeScoop(1000);
+  forward(10);//11
+  // delay(1000);
+  // openScoop(1000);
+  forward(21);
+  // closeScoop(1000);
+  forward(10);
+  // openScoop(500);
+ // Simulate scoop time
+}
+
+void moveToHospital() {
+   // Simulate drop-off
+  //  turnRight(15);
+   forward(46);
+}
+
+void returnToCenter() {
+ 
+}
+
 void forward(float distance_cm) {
   float time_needed = (distance_cm / speed_cm_per_s) * 1000; // convert to ms
   digitalWrite(in1, HIGH);
@@ -66,6 +94,20 @@ void stop() {
   digitalWrite(in3, LOW); digitalWrite(in4, LOW);
 }
 
+void test(){
+  backward(105);
+  delay(1000);
+  turnRight(45);
+  delay(1000);
+  forward(85);
+  delay(1000);
+  turnLeft(90);
+  delay(1000);
+  forward(27);
+  delay(1000);
+
+}
+
 void turnRight(int degrees) {
   int duration = degrees * 5.56;  // Time to rotate in milliseconds
   digitalWrite(in1, HIGH);  // Left motor forward
@@ -87,23 +129,11 @@ void turnLeft(int degrees) {
 }
 
 // Task Functions
-void scoopPatient() {
-  closeScoop(500);
-  forward(20);
-
-  
-  openScoop(1000);
-  forward(20);
-  closeScoop(500);
-  forward(10);
-  openScoop(500);
- // Simulate scoop time
-}
 
 void openScoop(int delayTime) {
   // Left goes to 0°, Right to 180°
   scoopLeft.write(0);
-  scoopRight.write(180);
+  scoopRight.write(90);
   Serial.write("opened");
   delay(delayTime);
 }
@@ -111,23 +141,7 @@ void openScoop(int delayTime) {
 void closeScoop(int delayTime) {
   // Both move to center to grip (example: 90°)
   scoopLeft.write(90);
-  scoopRight.write(90);
+  scoopRight.write(190);
   Serial.write("closed");
   delay(delayTime);
-}
-void moveToTopRight() {
-  turnRight(8);
-  forward(96);
-  turnLeft(190);
-  forward(27);
-  delay(2000);
-}
-
-void moveToHospital() {
-   // Simulate drop-off
-   forward(70);
-}
-
-void returnToCenter() {
- 
 }
