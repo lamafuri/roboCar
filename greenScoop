@@ -1,0 +1,108 @@
+#define in1 9
+#define in2 10
+#define in3 11
+#define in4 12
+#define ENA 5
+#define ENB 6
+#define motorSpeed 100 // #define motorSpeed 170
+
+float speed_cm_per_s = 58.6;
+void setup() {
+  Serial.begin(9600);
+  pinMode(in1, OUTPUT); pinMode(in2, OUTPUT);
+  pinMode(in3, OUTPUT); pinMode(in4, OUTPUT);
+  pinMode(ENA, OUTPUT); pinMode(ENB, OUTPUT);
+  analogWrite(ENA, motorSpeed);  //145cm/5sec => 29 cm / sec 
+  analogWrite(ENB, motorSpeed);
+  
+  //the code
+  delay(1000);//to give a good start 
+  firstRun();
+  delay(4000);
+  secondRun();
+  delay(2000);
+  thirdRun();
+  delay(2000);
+  lastRun();
+  forward(100);
+  backward(65);
+  turnRight(45);
+  forward(95);
+  
+}
+
+void loop() {}
+
+// Movement Functions
+
+void firstRun() {
+  turnRight(46);
+  forward(46);
+  turnRight(46);
+  forward(25);
+  // delay(1000);
+}
+void secondRun() {
+  forward(46);
+  turnRight(102);
+
+  // forward(80);
+  // turnRight(115);
+}
+void thirdRun() {
+  forward(87);
+  turnRight(97);
+  // forward(7);
+  // turnRight(15);
+
+}
+void lastRun() {
+  forward(80);
+}
+
+void forward(float distance_cm) {
+  float time_needed = (distance_cm / speed_cm_per_s) * 1000; // convert to ms
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
+  delay((int)time_needed);
+  stop();
+}
+void backward(float distance_cm) {
+  float time_needed = (distance_cm / speed_cm_per_s) * 1000; // convert to ms
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, HIGH);
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, HIGH);
+  delay((int)time_needed);
+  stop();
+}
+void stop() {
+  digitalWrite(in1, LOW); digitalWrite(in2, LOW);
+  digitalWrite(in3, LOW); digitalWrite(in4, LOW);
+}
+void turnRight(int degrees) {
+  int duration = degrees * 5.56;  // Time to rotate in milliseconds
+  digitalWrite(in1, HIGH);  // Left motor forward
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, LOW);  // Right motor forward
+  digitalWrite(in4, HIGH);
+  delay(duration);
+  stop();
+}
+void turnLeft(int degrees) {
+  int duration = degrees * 5.56;
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, HIGH);  // Left motor backward
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);  // Right motor backward
+  delay(duration);
+  stop();
+}
+
+// Task Functions
+void scoopPatient() {
+  
+ // Simulate scoop time
+}
